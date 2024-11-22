@@ -2,19 +2,19 @@
 <%@ page import="java.sql.*, java.util.*, dao.DBConnection" %>
 
 <%
-    // 获取 session 属性
+    // セッションから属性を取得
     String username = (String) session.getAttribute("username");
     String userRole = (String) session.getAttribute("userRole");
-    String userIDStr = (String) session.getAttribute("userID"); // 从 session 中获取 userID
+    String userIDStr = (String) session.getAttribute("userID"); // セッションからuserIDを取得
 
     if (username == null || userRole == null || userIDStr == null) {
         response.sendRedirect("login.jsp");
-        return; // 停止执行后续代码
+        return; // 後続コードの実行を停止
     }
 
-    int userID = Integer.parseInt(userIDStr); // 将 userID 转为整数类型
+    int userID = Integer.parseInt(userIDStr); // userIDを整数型に変換
 
-    // 查询用户的方案选择历史记录
+    // ユーザーのプラン選択履歴を取得
     List<String> planHistory = new ArrayList<>();
     List<Timestamp> selectionTimestamps = new ArrayList<>();
 
@@ -36,9 +36,9 @@
 
 <html>
 <head>
-    <title>选择无人机重点方案</title>
+    <title>ドローンプランの選択</title>
     <style>
-        /* 页面整体布局 */
+        /* ページ全体のレイアウト */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -102,7 +102,7 @@
             background-color: #45a049;
         }
 
-        /* 显示历史记录 */
+        /* 履歴の表示 */
         table {
             width: 100%;
             margin-top: 20px;
@@ -124,70 +124,71 @@
 
     </style>
     <script>
-        // 清除履历确认函数
+        // 履歴クリア確認関数
         function confirmClear() {
-            return confirm("确定要清除所有履历吗？此操作不可撤销！");
+            return confirm("全ての履歴をクリアしますか？この操作は取り消せません！");
         }
     </script>
 </head>
 <body>
-    <h1>无人机方案选择</h1>
-    <p>您好，<%= username %>！</p>
+<jsp:include page="menu.jsp" />
+    <h1>ドローンプランの選択</h1>
+    <p>こんにちは、<%= username %>さん！</p>
 
-    <!-- 方案选择卡片 -->
+    <!-- プラン選択カード -->
     <div class="card-container">
-        <!-- 见习农夫 -->
+        <!-- 初心者プラン -->
         <div class="card">
-            <h2>见习农夫</h2>
-            <p>价格：10000</p>
-            <p>土地面积：3000</p>
-            <p>收获量：5000</p>
-            <p>米的种类：1</p>
+            <h2>初心者プラン</h2>
+            <p>価格：10000</p>
+            <p>土地面積：3000</p>
+            <p>収穫量：5000</p>
+            <p>お米の種類：1</p>
             <form action="SelectPlanServlet" method="post">
                 <input type="hidden" name="userID" value="<%= userID %>">
                 <input type="hidden" name="plan" value="A">
-                <button type="submit">选择此方案</button>
+                <button type="submit">このプランを選択</button>
             </form>
         </div>
 
-        <!-- 专业农夫 -->
+        <!-- プロフェッショナルプラン -->
         <div class="card">
-            <h2>专业农夫</h2>
-            <p>价格：20000</p>
-            <p>土地面积：5000</p>
-            <p>收获量：10000</p>
-            <p>米的种类：3</p>
+            <h2>プロフェッショナルプラン</h2>
+            <p>価格：20000</p>
+            <p>土地面積：5000</p>
+            <p>収穫量：10000</p>
+            <p>お米の種類：3</p>
             <form action="SelectPlanServlet" method="post">
                 <input type="hidden" name="userID" value="<%= userID %>">
                 <input type="hidden" name="plan" value="B">
-                <button type="submit">选择此方案</button>
+                <button type="submit">このプランを選択</button>
             </form>
         </div>
 
-        <!-- 超人农夫 -->
+        <!-- スーパープラン -->
         <div class="card">
-            <h2>超人农夫</h2>
-            <p>价格：50000</p>
-            <p>土地面积：10000</p>
-            <p>收获量：50000</p>
-            <p>米的种类：10</p>
+            <h2>スーパープラン</h2>
+            <p>価格：50000</p>
+            <p>土地面積：10000</p>
+            <p>収穫量：50000</p>
+            <p>お米の種類：10</p>
             <form action="SelectPlanServlet" method="post">
                 <input type="hidden" name="userID" value="<%= userID %>">
                 <input type="hidden" name="plan" value="C">
-                <button type="submit">选择此方案</button>
+                <button type="submit">このプランを選択</button>
             </form>
         </div>
     </div>
 
-    <!-- 显示方案选择历史 -->
-    <h2>您的方案选择历史</h2>
+    <!-- プラン選択履歴の表示 -->
+    <h2>プラン選択履歴</h2>
     <% if (planHistory.isEmpty()) { %>
-        <p>您尚未选择任何方案。</p>
+        <p>まだプランを選択していません。</p>
     <% } else { %>
         <table>
             <tr>
-                <th>方案</th>
-                <th>选择时间</th>
+                <th>プラン</th>
+                <th>選択日時</th>
             </tr>
             <% for (int i = 0; i < planHistory.size(); i++) { %>
                 <tr>
@@ -198,13 +199,14 @@
         </table>
     <% } %>
 
-    <!-- 清除所有履历 -->
+    <!-- 履歴クリア -->
     <form action="ClearHistoryServlet" method="post" onsubmit="return confirmClear();">
         <input type="hidden" name="userID" value="<%= userID %>">
-        <button type="submit">清除所有履历</button>
+        <button type="submit">全ての履歴をクリア</button>
     </form>
 
-    <!-- 返回主页按钮 -->
-    <button onclick="location.href='index.jsp'">返回主页</button>
+    <!-- ホームページに戻るボタン -->
+    <button onclick="location.href='index.jsp'">ホームに戻る</button>
+     <button onclick="location.href='cart.jsp'">カートを見る</button>
 </body>
 </html>

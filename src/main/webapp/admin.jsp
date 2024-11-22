@@ -3,7 +3,7 @@
 
 <%
     String userRole = (String) session.getAttribute("userRole");
-    if (!"admin".equals(userRole)) {
+    if (!"1".equals(userRole)) {
         response.sendRedirect("index.jsp");
         return;
     }
@@ -11,18 +11,58 @@
 
 <html>
 <head>
-    <title>用户管理</title>
+    <title>ユーザー管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .back-button {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>用户管理</h1>
+    <h1>ユーザー管理</h1>
 
-    <table border="1">
+    <table>
         <tr>
-            <th>用户名</th>
-            <th>密码</th>
-            <th>邮箱</th>
-            <th>地址</th>
-            <th>角色</th>
+            <th>ユーザー名</th>
+            <th>パスワード</th>
+            <th>メールアドレス</th>
+            <th>住所</th>
+            <th>役割</th>
             <th>操作</th>
         </tr>
         <%
@@ -48,7 +88,7 @@
                         <td>
                             <form action="adminEditUser.jsp" method="get" style="display:inline;">
                                 <input type="hidden" name="userID" value="<%= userID %>">
-                                <button type="submit">编辑</button>
+                                <button type="submit">編集</button>
                             </form>
                         </td>
                     </tr>
@@ -59,5 +99,10 @@
             }
         %>
     </table>
+
+    <!-- メインページへ戻るボタン -->
+    <div class="back-button">
+        <button onclick="location.href='index.jsp'">メインページへ戻る</button>
+    </div>
 </body>
 </html>

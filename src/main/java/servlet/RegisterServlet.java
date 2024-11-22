@@ -21,7 +21,7 @@ public class RegisterServlet extends HttpServlet {
         String address = request.getParameter("address");
 
         try (Connection conn = DBConnection.getConnection()) {
-            // 插入新用户
+            // 修复 SQL：去掉 Role 列，使用默认值
             String sql = "INSERT INTO User (Username, Password, Email, Address) VALUES (?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);

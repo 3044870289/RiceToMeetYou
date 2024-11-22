@@ -1,4 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+
 <%
     String username = (String) session.getAttribute("username");
     String userRole = (String) session.getAttribute("userRole");
@@ -11,19 +13,19 @@
 
 <html>
 <head>
-    <title>主页</title>
+    <title>ホーム</title>
 </head>
 <body>
-    <h1>欢迎来到主页</h1>
-    <p>您好，<%= username %>！ 您的角色是：<%= userRole %>。</p>
+    <jsp:include page="menu.jsp" />
+    <h1>ホームへようこそ</h1>
+    <p><%= username %> 様、ようこそ！</p>
 
-    <% if ("admin".equals(userRole)) { %>
-        <button onclick="location.href='admin.jsp'">管理用户</button>
-    <% } else if ("user".equals(userRole)) { %>
-        <button onclick="location.href='user.jsp'">修改个人信息</button>
+    <% if ("1".equals(userRole)) { %>
+        <button onclick="location.href='admin.jsp'">ユーザー管理</button>
+    <% } else if ("2".equals(userRole)) { %>
+        <button onclick="location.href='user.jsp'">個人情報編集</button>
     <% } %>
 
-    <button onclick="location.href='logout.jsp'">退出登录</button>
-    <button onclick="location.href='choosePlan.jsp'">选择无人机重点方案</button>
+    <button onclick="location.href='logout.jsp'">ログアウト</button>
 </body>
 </html>
