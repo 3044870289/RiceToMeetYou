@@ -6,31 +6,33 @@ import java.sql.PreparedStatement;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
 import dao.DBConnection;
 
 @WebServlet("/UpdateRoleServlet")
 public class UpdateRoleServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userID = request.getParameter("userID");
-        String newRole = request.getParameter("newRole");
+        String userIDStr = request.getParameter("userID");
+        String newRoleStr = request.getParameter("newRole");
 
-        // 当前登录的用户
-        String currentUserID = (String) request.getSession().getAttribute("userID");
+        int userID = Integer.parseInt(userIDStr);
+        int newRole = Integer.parseInt(newRoleStr);
 
-        if (userID.equals(currentUserID)) {
-            response.getWriter().println("自分を直せない");
+        // 当前登录的用户ID
+        int currentUserID = (Integer) request.getSession().getAttribute("userID");
+
+        // 验证是否修改当前用户
+        if (userID == currentUserID) {
+            response.getWriter().println("无法修改自己的权限");
             return;
         }
 
         try (Connection conn = DBConnection.getConnection()) {
             String sql = "UPDATE User SET Role = ? WHERE UserID = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, newRole);
-            stmt.setString(2, userID);
+            stmt.setInt(1, newRole);
+            stmt.setInt(2, userID);
             stmt.executeUpdate();
             response.sendRedirect("admin.jsp");
         } catch (Exception e) {

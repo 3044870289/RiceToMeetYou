@@ -4,12 +4,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
+
 import dao.DBConnection;
 
 @WebServlet("/LoginServlet")
@@ -27,12 +26,12 @@ public class LoginServlet extends HttpServlet {
 
             if (rs.next()) {
                 int userID = rs.getInt("UserID");
-                String userRole = rs.getString("Role");
+                int userRole = rs.getInt("Role"); // 获取整数类型的角色
 
                 HttpSession session = request.getSession();
-                session.setAttribute("userID", String.valueOf(userID));
+                session.setAttribute("userID", userID); // 存储整数类型的 userID
                 session.setAttribute("username", username);
-                session.setAttribute("userRole", userRole);
+                session.setAttribute("userRole", userRole); // 存储整数类型的 userRole
 
                 response.sendRedirect("index.jsp");
             } else {

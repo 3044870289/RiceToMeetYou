@@ -2,7 +2,8 @@
 <%@ page import="java.sql.*, dao.DBConnection" %>
 
 <%
-    String userID = (String) session.getAttribute("userID");
+    // 从会话中获取 userID，类型为 Integer
+    Integer userID = (Integer) session.getAttribute("userID");
     if (userID == null) {
         response.sendRedirect("login.jsp");
         return;
@@ -81,7 +82,7 @@
     </style>
 </head>
 <body>
-<jsp:include page="menu.jsp" />
+    <jsp:include page="menu.jsp" />
     <h1>ショッピングカート</h1>
 
     <%
@@ -101,7 +102,7 @@
                 String sql = "SELECT Shop.Name, Shop.Price, cart.Quantity, Shop.Price * cart.Quantity AS TotalPrice, cart.CartID " +
                              "FROM cart JOIN Shop ON cart.ShopID = Shop.ID WHERE cart.UserID = ?";
                 PreparedStatement stmt = conn.prepareStatement(sql);
-                stmt.setInt(1, Integer.parseInt(userID));
+                stmt.setInt(1, userID); // 直接使用 Integer 类型的 userID
                 ResultSet rs = stmt.executeQuery();
 
                 while (rs.next()) {

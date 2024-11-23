@@ -15,23 +15,35 @@ import dao.DBConnection;
 @WebServlet("/UpdateUserInfoServlet")
 public class UpdateUserInfoServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userID = (String) request.getSession().getAttribute("userID");
+        String userID = request.getParameter("userID");
         String password = request.getParameter("password");
         String email = request.getParameter("email");
         String address = request.getParameter("address");
 
-        try (Connection conn = DBConnection.getConnection()) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            conn = DBConnection.getConnection();
             String sql = "UPDATE User SET Password = ?, Email = ?, Address = ? WHERE UserID = ?";
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt = conn.prepareStatement(sql);
             stmt.setString(1, password);
             stmt.setString(2, email);
             stmt.setString(3, address);
             stmt.setString(4, userID);
             stmt.executeUpdate();
-            response.sendRedirect("user.jsp?success=true");
+
+            response.sendRedirect("admin.jsp?success=true");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("user.jsp?error=true");
+            response.sendRedirect("admin.jsp?error=true");
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 }

@@ -2,8 +2,8 @@
 <%@ page import="java.sql.*, dao.DBConnection" %>
 
 <%
-    String userRole = (String) session.getAttribute("userRole");
-    if (!"1".equals(userRole)) {
+    Integer userRole = (Integer) session.getAttribute("userRole");
+    if (userRole == null || userRole != 1) {
         response.sendRedirect("index.jsp");
         return;
     }
@@ -26,6 +26,7 @@
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
+            background-color: #fff;
         }
         th, td {
             border: 1px solid #ddd;
@@ -36,12 +37,15 @@
             background-color: #f2f2f2;
             color: #333;
         }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
         button {
-            padding: 10px 15px;
+            padding: 8px 12px;
             background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 3px;
             cursor: pointer;
         }
         button:hover {
@@ -50,6 +54,12 @@
         .back-button {
             margin-top: 20px;
             text-align: center;
+        }
+        .back-button button {
+            background-color: #008CBA;
+        }
+        .back-button button:hover {
+            background-color: #007bb5;
         }
     </style>
 </head>
@@ -77,14 +87,24 @@
                     String password = rs.getString("Password");
                     String email = rs.getString("Email");
                     String address = rs.getString("Address");
-                    String role = rs.getString("Role");
+                    int role = rs.getInt("Role");
+
+                    // 将角色整数值转换为字符串表示
+                    String roleDisplay = "";
+                    if (role == 1) {
+                        roleDisplay = "admin";
+                    } else if (role == 2) {
+                        roleDisplay = "user";
+                    } else {
+                        roleDisplay = "unknown";
+                    }
         %>
                     <tr>
                         <td><%= username %></td>
                         <td><%= password %></td>
                         <td><%= email %></td>
                         <td><%= address %></td>
-                        <td><%= role %></td>
+                        <td><%= roleDisplay %></td>
                         <td>
                             <form action="adminEditUser.jsp" method="get" style="display:inline;">
                                 <input type="hidden" name="userID" value="<%= userID %>">

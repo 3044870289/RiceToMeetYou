@@ -2,26 +2,24 @@
 <%@ page import="java.sql.*, java.util.*, dao.DBConnection" %>
 
 <%
-    // セッションから属性を取得
+    // 从会话中获取属性
     String username = (String) session.getAttribute("username");
-    String userRole = (String) session.getAttribute("userRole");
-    String userIDStr = (String) session.getAttribute("userID"); // セッションからuserIDを取得
+    Integer userRole = (Integer) session.getAttribute("userRole");
+    Integer userID = (Integer) session.getAttribute("userID"); // 从会话中获取 userID
 
-    if (username == null || userRole == null || userIDStr == null) {
+    if (username == null || userRole == null || userID == null) {
         response.sendRedirect("login.jsp");
-        return; // 後続コードの実行を停止
+        return; // 停止后续代码执行
     }
 
-    int userID = Integer.parseInt(userIDStr); // userIDを整数型に変換
-
-    // ユーザーのプラン選択履歴を取得
+    // 获取用户的计划选择历史
     List<String> planHistory = new ArrayList<>();
     List<Timestamp> selectionTimestamps = new ArrayList<>();
 
     try (Connection conn = DBConnection.getConnection()) {
         String sql = "SELECT Plan, SelectionTime FROM DronePlanSelection WHERE UserID = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, userID);
+        stmt.setInt(1, userID); // 使用 Integer 类型的 userID
 
         ResultSet rs = stmt.executeQuery();
 
@@ -38,7 +36,7 @@
 <head>
     <title>ドローンプランの選択</title>
     <style>
-        /* ページ全体のレイアウト */
+        /* 页面整体布局 */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -102,7 +100,7 @@
             background-color: #45a049;
         }
 
-        /* 履歴の表示 */
+        /* 历史记录显示 */
         table {
             width: 100%;
             margin-top: 20px;
@@ -124,18 +122,18 @@
 
     </style>
     <script>
-        // 履歴クリア確認関数
+        // 确认清除历史记录
         function confirmClear() {
             return confirm("全ての履歴をクリアしますか？この操作は取り消せません！");
         }
     </script>
 </head>
 <body>
-<jsp:include page="menu.jsp" />
+    <jsp:include page="menu.jsp" />
     <h1>ドローンプランの選択</h1>
     <p>こんにちは、<%= username %>さん！</p>
 
-    <!-- プラン選択カード -->
+    <!-- 计划选择卡片 -->
     <div class="card-container">
         <!-- 初心者プラン -->
         <div class="card">
@@ -180,7 +178,7 @@
         </div>
     </div>
 
-    <!-- プラン選択履歴の表示 -->
+    <!-- 计划选择历史记录 -->
     <h2>プラン選択履歴</h2>
     <% if (planHistory.isEmpty()) { %>
         <p>まだプランを選択していません。</p>
@@ -199,14 +197,14 @@
         </table>
     <% } %>
 
-    <!-- 履歴クリア -->
+    <!-- 清除历史记录 -->
     <form action="ClearHistoryServlet" method="post" onsubmit="return confirmClear();">
         <input type="hidden" name="userID" value="<%= userID %>">
         <button type="submit">全ての履歴をクリア</button>
     </form>
 
-    <!-- ホームページに戻るボタン -->
+    <!-- 返回主页按钮 -->
     <button onclick="location.href='index.jsp'">ホームに戻る</button>
-     <button onclick="location.href='cart.jsp'">カートを見る</button>
+    <button onclick="location.href='cart.jsp'">カートを見る</button>
 </body>
 </html>

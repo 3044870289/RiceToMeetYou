@@ -1,0 +1,18 @@
+# 忽略编译后的 class 文件
+*.class
+
+# 忽略构建目录
+/build/
+/target/
+
+# 忽略 IDE 设置文件
+.idea/
+*.iml
+.vscode/
+
+# 忽略日志文件
+*.log
+
+# 忽略临时文件
+*.tmp
+
