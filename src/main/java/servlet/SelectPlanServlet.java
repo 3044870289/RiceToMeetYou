@@ -17,36 +17,37 @@ import dao.DBConnection;
 public class SelectPlanServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String userIDStr = request.getParameter("userID");
-        String plan = request.getParameter("plan");
-        String countStr = request.getParameter("count"); // 新增输入的选择次数
+        String planIDStr = request.getParameter("planID");
+        String countStr = request.getParameter("count");
 
         try (Connection conn = DBConnection.getConnection()) {
             int userID = Integer.parseInt(userIDStr);
+            int planID = Integer.parseInt(planIDStr);
             int count = Integer.parseInt(countStr);
 
-            // 检查是否已有相同的 UserID 和 Plan
-            String checkSQL = "SELECT Count FROM DronePlanSelection WHERE UserID = ? AND Plan = ?";
+            // 检查是否已有相同的 UserID 和 planID
+            String checkSQL = "SELECT Count FROM DronePlanSelection WHERE UserID = ? AND planID = ?";
             PreparedStatement checkStmt = conn.prepareStatement(checkSQL);
             checkStmt.setInt(1, userID);
-            checkStmt.setString(2, plan);
+            checkStmt.setInt(2, planID);
 
             ResultSet rs = checkStmt.executeQuery();
 
             if (rs.next()) {
                 // 如果记录已存在，更新 Count 值
                 int existingCount = rs.getInt("Count");
-                String updateSQL = "UPDATE DronePlanSelection SET Count = ? WHERE UserID = ? AND Plan = ?";
+                String updateSQL = "UPDATE DronePlanSelection SET Count = ? WHERE UserID = ? AND planID = ?";
                 PreparedStatement updateStmt = conn.prepareStatement(updateSQL);
                 updateStmt.setInt(1, existingCount + count);
                 updateStmt.setInt(2, userID);
-                updateStmt.setString(3, plan);
+                updateStmt.setInt(3, planID);
                 updateStmt.executeUpdate();
             } else {
                 // 如果记录不存在，插入新记录
-                String insertSQL = "INSERT INTO DronePlanSelection (UserID, Plan, Count) VALUES (?, ?, ?)";
+                String insertSQL = "INSERT INTO DronePlanSelection (UserID, planID, Count) VALUES (?, ?, ?)";
                 PreparedStatement insertStmt = conn.prepareStatement(insertSQL);
                 insertStmt.setInt(1, userID);
-                insertStmt.setString(2, plan);
+                insertStmt.setInt(2, planID);
                 insertStmt.setInt(3, count);
                 insertStmt.executeUpdate();
             }

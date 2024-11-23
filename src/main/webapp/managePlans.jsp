@@ -12,17 +12,17 @@
 
     List<Map<String, Object>> plans = new ArrayList<>();
     try (Connection conn = DBConnection.getConnection()) {
-        String sql = "SELECT Plan, PlanName, ContractDuration, HarvestAmount, Price FROM DronePlans";
+        String sql = "SELECT planID, planName, contractDuration, harvestAmount, price FROM DronePlans";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
             Map<String, Object> plan = new HashMap<>();
-            plan.put("plan", rs.getString("Plan"));
-            plan.put("planName", rs.getString("PlanName"));
-            plan.put("duration", rs.getString("ContractDuration"));
-            plan.put("amount", rs.getInt("HarvestAmount"));
-            plan.put("price", rs.getInt("Price"));
+            plan.put("planID", rs.getInt("planID"));
+            plan.put("planName", rs.getString("planName"));
+            plan.put("duration", rs.getString("contractDuration"));
+            plan.put("amount", rs.getInt("harvestAmount"));
+            plan.put("price", rs.getInt("price"));
             plans.add(plan);
         }
     } catch (Exception e) {
@@ -127,23 +127,23 @@
             <div class="card">
                 <h2><%= plan.get("planName") %></h2>
                 <form action="EditPlanServlet" method="post">
-                    <input type="hidden" name="plan" value="<%= plan.get("plan") %>">
+                    <input type="hidden" name="planID" value="<%= plan.get("planID") %>">
 
                     <p>
-                        <label for="planName_<%= plan.get("plan") %>">プラン名称:</label>
-                        <input type="text" id="planName_<%= plan.get("plan") %>" name="planName" value="<%= plan.get("planName") %>" required>
+                        <label for="planName_<%= plan.get("planID") %>">プラン名称:</label>
+                        <input type="text" id="planName_<%= plan.get("planID") %>" name="planName" value="<%= plan.get("planName") %>" required>
                     </p>
                     <p>
-                        <label for="duration_<%= plan.get("plan") %>">契約期間:</label>
-                        <input type="text" id="duration_<%= plan.get("plan") %>" name="duration" value="<%= plan.get("duration") %>" required>
+                        <label for="duration_<%= plan.get("planID") %>">契約期間:</label>
+                        <input type="text" id="duration_<%= plan.get("planID") %>" name="duration" value="<%= plan.get("duration") %>" required>
                     </p>
                     <p>
-                        <label for="amount_<%= plan.get("plan") %>">収穫量:</label>
-                        <input type="number" id="amount_<%= plan.get("plan") %>" name="amount" value="<%= plan.get("amount") %>" required>
+                        <label for="amount_<%= plan.get("planID") %>">収穫量:</label>
+                        <input type="number" id="amount_<%= plan.get("planID") %>" name="amount" value="<%= plan.get("amount") %>" required>
                     </p>
                     <p>
-                        <label for="price_<%= plan.get("plan") %>">価格:</label>
-                        <input type="number" id="price_<%= plan.get("plan") %>" name="price" value="<%= plan.get("price") %>" required>
+                        <label for="price_<%= plan.get("planID") %>">価格:</label>
+                        <input type="number" id="price_<%= plan.get("planID") %>" name="price" value="<%= plan.get("price") %>" required>
                     </p>
                     <button type="submit">保存</button>
                 </form>

@@ -18,28 +18,28 @@
     List<Map<String, Object>> plans = new ArrayList<>();
     try (Connection conn = DBConnection.getConnection()) {
         // 获取 DronePlans 数据
-        String sql = "SELECT Plan, PlanName, ContractDuration, HarvestAmount, Price FROM DronePlans";
+        String sql = "SELECT planID, planName, contractDuration, harvestAmount, price FROM DronePlans";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
             Map<String, Object> plan = new HashMap<>();
-            plan.put("plan", rs.getString("Plan"));
-            plan.put("planName", rs.getString("PlanName"));
-            plan.put("duration", rs.getString("ContractDuration"));
-            plan.put("amount", rs.getInt("HarvestAmount"));
-            plan.put("price", rs.getInt("Price"));
+            plan.put("planID", rs.getInt("planID"));
+            plan.put("planName", rs.getString("planName"));
+            plan.put("duration", rs.getString("contractDuration"));
+            plan.put("amount", rs.getInt("harvestAmount"));
+            plan.put("price", rs.getInt("price"));
             plans.add(plan);
         }
 
         // 获取用户历史选择数据
-        sql = "SELECT Plan, Count, SelectionTime FROM DronePlanSelection WHERE UserID = ?";
+        sql = "SELECT planID, Count, SelectionTime FROM DronePlanSelection WHERE UserID = ?";
         PreparedStatement stmtHistory = conn.prepareStatement(sql);
         stmtHistory.setInt(1, userID);
         ResultSet historyRs = stmtHistory.executeQuery();
 
         while (historyRs.next()) {
-            planHistory.add(historyRs.getString("Plan"));
+            planHistory.add(historyRs.getString("planID"));
             counts.add(historyRs.getInt("Count"));
             selectionTimestamps.add(historyRs.getTimestamp("SelectionTime"));
         }
@@ -47,11 +47,10 @@
         e.printStackTrace();
     }
 %>
-
 <html>
 <head>
     <title>ドローンプランの選択</title>
-    <style>
+     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -178,14 +177,12 @@
 <body>
     <jsp:include page="menu.jsp" />
     <h1>ドローンプランの選択</h1>
-    <!-- 管理者按钮 -->
     <div class="actions">
         <% if (userRole.equals(1)) { %>
             <button onclick="location.href='managePlans.jsp'">プランを管理</button>
         <% } %>
     </div>
 
-    <!-- 卡片布局 -->
     <div class="card-container">
         <% for (Map<String, Object> plan : plans) { %>
             <div class="card">
@@ -195,7 +192,7 @@
                 <p>価格: ¥<%= plan.get("price") %></p>
                 <form action="SelectPlanMultipleServlet" method="post">
                     <input type="hidden" name="userID" value="<%= userID %>">
-                    <input type="hidden" name="plan" value="<%= plan.get("plan") %>">
+                    <input type="hidden" name="planID" value="<%= plan.get("planID") %>">
                     <label>選択回数:</label>
                     <input type="number" name="count" min="1" value="1">
                     <button type="submit">このプランを選択</button>
@@ -204,29 +201,14 @@
         <% } %>
     </div>
 
-    <!-- 详细说明 -->
-    <div class="details-box">
-        <h2>詳細</h2>
-        <p>収穫回数: 年に3回</p>
-        <p>1回あたりの収穫量: 1機が48kgの収穫</p>
-        <p>年間収穫量計算:</p>
-        <ul>
-            <% for (Map<String, Object> plan : plans) { %>
-                <li><%= plan.get("planName") %> プラン: 
-                    <%= plan.get("amount") %>kg
-                </li>
-            <% } %>
-        </ul>
-    </div>
-
-    <!-- プラン選択履歴 -->
     <h2>プラン選択履歴</h2>
+<div id="plan-history">
     <% if (planHistory.isEmpty()) { %>
         <p>まだプランを選択していません。</p>
     <% } else { %>
         <table>
             <tr>
-                <th>プラン</th>
+                <th>プランID</th>
                 <th>選択回数</th>
                 <th>選択日時</th>
             </tr>
@@ -239,11 +221,22 @@
             <% } %>
         </table>
     <% } %>
+</div>
 
-    <!-- 清空履歴 -->
-    <form action="ClearHistoryServlet" method="post" onsubmit="return confirm('全ての履歴をクリアしますか？');">
-        <input type="hidden" name="userID" value="<%= userID %>">
-        <button type="submit">全ての履歴をクリア</button>
-    </form>
+<div class="actions">
+    <button onclick="togglePlanHistory()">プラン履歴を表示/非表示</button>
+</div>
+
+<script>
+    function togglePlanHistory() {
+        const historyDiv = document.getElementById('plan-history');
+        if (historyDiv.style.display === 'none') {
+            historyDiv.style.display = 'block';
+        } else {
+            historyDiv.style.display = 'none';
+        }
+    }
+</script>
+
 </body>
 </html>

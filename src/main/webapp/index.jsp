@@ -32,14 +32,15 @@
         }
 
         // 查询方案选择记录
-        String planQuery = "SELECT Plan, Count, SelectionTime FROM DronePlanSelection WHERE UserID = ?";
+        String planQuery = "SELECT dp.planName, dps.Count, dps.SelectionTime FROM DronePlanSelection dps " +
+                           "INNER JOIN DronePlans dp ON dps.planID = dp.planID WHERE dps.UserID = ?";
         PreparedStatement planStmt = conn.prepareStatement(planQuery);
         planStmt.setInt(1, userID);
         ResultSet planRS = planStmt.executeQuery();
 
         while (planRS.next()) {
             Map<String, String> record = new HashMap<>();
-            record.put("plan", planRS.getString("Plan"));
+            record.put("plan", planRS.getString("planName"));
             record.put("count", String.valueOf(planRS.getInt("Count")));
             record.put("selectionTime", planRS.getString("SelectionTime"));
             planSelectionHistory.add(record);
@@ -190,8 +191,9 @@
 
    <% if (!planSelectionHistory.isEmpty()) { %>
     <form action="ClearPlanHistoryServlet" method="post" onsubmit="return confirm('プラン選択履歴を清空しますか？');">
-        <button class="button" type="submit">プラン選択履歴を清空</button>
+        <button class="button" type="submit">プラン選択履歴を清空</button>     
     </form>
+    <button class="button" onclick="location.href='droneMap.jsp'">ドローンの位置を見る</button>
 <% } %>
 
 </body>
