@@ -15,17 +15,33 @@
     List<Integer> counts = new ArrayList<>();
     List<Timestamp> selectionTimestamps = new ArrayList<>();
 
+    List<Map<String, Object>> plans = new ArrayList<>();
     try (Connection conn = DBConnection.getConnection()) {
-        String sql = "SELECT Plan, Count, SelectionTime FROM DronePlanSelection WHERE UserID = ?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, userID);
-
-        ResultSet rs = stmt.executeQuery();
+        // 获取 DronePlans 数据
+        String sql = "SELECT Plan, PlanName, ContractDuration, HarvestAmount, Price FROM DronePlans";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
 
         while (rs.next()) {
-            planHistory.add(rs.getString("Plan"));
-            counts.add(rs.getInt("Count"));
-            selectionTimestamps.add(rs.getTimestamp("SelectionTime"));
+            Map<String, Object> plan = new HashMap<>();
+            plan.put("plan", rs.getString("Plan"));
+            plan.put("planName", rs.getString("PlanName"));
+            plan.put("duration", rs.getString("ContractDuration"));
+            plan.put("amount", rs.getInt("HarvestAmount"));
+            plan.put("price", rs.getInt("Price"));
+            plans.add(plan);
+        }
+
+        // 获取用户历史选择数据
+        sql = "SELECT Plan, Count, SelectionTime FROM DronePlanSelection WHERE UserID = ?";
+        PreparedStatement stmtHistory = conn.prepareStatement(sql);
+        stmtHistory.setInt(1, userID);
+        ResultSet historyRs = stmtHistory.executeQuery();
+
+        while (historyRs.next()) {
+            planHistory.add(historyRs.getString("Plan"));
+            counts.add(historyRs.getInt("Count"));
+            selectionTimestamps.add(historyRs.getTimestamp("SelectionTime"));
         }
     } catch (Exception e) {
         e.printStackTrace();
@@ -138,56 +154,54 @@
             color: #333;
             line-height: 1.6;
         }
+
+        .actions {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .actions button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .actions button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
     <jsp:include page="menu.jsp" />
     <h1>ドローンプランの選択</h1>
-    <p>こんにちは、<%= username %>さん！</p>
+    <!-- 管理者按钮 -->
+    <div class="actions">
+        <% if (userRole.equals(1)) { %>
+            <button onclick="location.href='managePlans.jsp'">プランを管理</button>
+        <% } %>
+    </div>
 
     <!-- 卡片布局 -->
     <div class="card-container">
-        <div class="card">
-            <h2>スターター・プラン</h2>
-            <p>契約期間: 1年</p>
-            <p>収穫量: 約146kg（1機）</p>
-            <p>価格: ¥500,000</p>
-            <form action="SelectPlanMultipleServlet" method="post">
-                <input type="hidden" name="userID" value="<%= userID %>">
-                <input type="hidden" name="plan" value="A">
-                <label>選択回数:</label>
-                <input type="number" name="count" min="1" value="1">
-                <button type="submit">このプランを選択</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>プロフェッショナル・プラン</h2>
-            <p>契約期間: 3年</p>
-            <p>収穫量: 約292kg（2機）</p>
-            <p>価格: ¥3,000,000</p>
-            <form action="SelectPlanMultipleServlet" method="post">
-                <input type="hidden" name="userID" value="<%= userID %>">
-                <input type="hidden" name="plan" value="B">
-                <label>選択回数:</label>
-                <input type="number" name="count" min="1" value="1">
-                <button type="submit">このプランを選択</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>アルティメット・プラン</h2>
-            <p>契約期間: 5～10年</p>
-            <p>収穫量: 約584kg（4機）</p>
-            <p>価格: ¥8,000,000</p>
-            <form action="SelectPlanMultipleServlet" method="post">
-                <input type="hidden" name="userID" value="<%= userID %>">
-                <input type="hidden" name="plan" value="C">
-                <label>選択回数:</label>
-                <input type="number" name="count" min="1" value="1">
-                <button type="submit">このプランを選択</button>
-            </form>
-        </div>
+        <% for (Map<String, Object> plan : plans) { %>
+            <div class="card">
+                <h2><%= plan.get("planName") %></h2>
+                <p>契約期間: <%= plan.get("duration") %></p>
+                <p>収穫量: 約<%= plan.get("amount") %>kg</p>
+                <p>価格: ¥<%= plan.get("price") %></p>
+                <form action="SelectPlanMultipleServlet" method="post">
+                    <input type="hidden" name="userID" value="<%= userID %>">
+                    <input type="hidden" name="plan" value="<%= plan.get("plan") %>">
+                    <label>選択回数:</label>
+                    <input type="number" name="count" min="1" value="1">
+                    <button type="submit">このプランを選択</button>
+                </form>
+            </div>
+        <% } %>
     </div>
 
     <!-- 详细说明 -->
@@ -197,9 +211,11 @@
         <p>1回あたりの収穫量: 1機が48kgの収穫</p>
         <p>年間収穫量計算:</p>
         <ul>
-            <li>スターター・プラン: 1機 × 3回 × 48kg = 144kg</li>
-            <li>プロフェッショナル・プラン: 2機 × 3回 × 48kg = 288kg</li>
-            <li>アルティメット・プラン: 4機 × 3回 × 48kg = 576kg</li>
+            <% for (Map<String, Object> plan : plans) { %>
+                <li><%= plan.get("planName") %> プラン: 
+                    <%= plan.get("amount") %>kg
+                </li>
+            <% } %>
         </ul>
     </div>
 

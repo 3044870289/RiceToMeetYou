@@ -188,10 +188,11 @@
         <% } } %>
     </table>
 
-    <% if (!planSelectionHistory.isEmpty()) { %>
-        <form action="ClearPlanHistoryServlet" method="post">
-            <button class="button" type="submit">プラン選択履歴を清空</button>
-        </form>
-    <% } %>
+   <% if (!planSelectionHistory.isEmpty()) { %>
+    <form action="ClearPlanHistoryServlet" method="post" onsubmit="return confirm('プラン選択履歴を清空しますか？');">
+        <button class="button" type="submit">プラン選択履歴を清空</button>
+    </form>
+<% } %>
+
 </body>
 </html>

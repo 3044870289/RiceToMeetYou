@@ -3,7 +3,9 @@
 
 <%
     String username = (String) session.getAttribute("username");
-    if (username == null) {
+    Integer userRole = (Integer) session.getAttribute("userRole");
+
+    if (username == null || userRole == null) {
         response.sendRedirect("login.jsp");
         return;
     }
@@ -95,6 +97,27 @@
             color: #888;
             margin-top: 30px;
         }
+        .actions {
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .actions .admin-button {
+        display: inline-block;
+        padding: 12px 30px; /* 长度调整 */
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        background-color: #4CAF50; /* 绿色背景 */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-decoration: none; /* 去掉超链接默认下划线 */
+    }
+
+    .actions .admin-button:hover {
+        background-color: #45a049; /* 鼠标悬停时的颜色 */
+    }
     </style>
 </head>
 <body>
@@ -123,9 +146,12 @@
         </div>
     <% } %>
 
-    <div class="actions">
-        <button onclick="location.href='index.jsp'">ホームに戻る</button>
-        <button onclick="location.href='cart.jsp'">カートを見る</button>
-    </div>
+<div class="actions">
+    <% if (userRole.equals(1)) { %>
+        <!-- 管理员按钮 -->
+        <a href="manageShop.jsp" class="admin-button">商品を管理</a>
+    <% } %>
+</div>
+
 </body>
 </html>

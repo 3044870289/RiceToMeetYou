@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DBConnection {
-    private static final String URL = "jdbc:mysql://localhost:3306/riceDB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+	private static final String URL = "jdbc:mysql://localhost:3306/riceDB?useUnicode=true&characterEncoding=UTF-8";
     private static final String USER = "root";
     private static final String PASSWORD = "qq5452";
     private static final Logger LOGGER = Logger.getLogger(DBConnection.class.getName());
