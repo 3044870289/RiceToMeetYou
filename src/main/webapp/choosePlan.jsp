@@ -2,29 +2,29 @@
 <%@ page import="java.sql.*, java.util.*, dao.DBConnection" %>
 
 <%
-    // 从会话中获取属性
     String username = (String) session.getAttribute("username");
     Integer userRole = (Integer) session.getAttribute("userRole");
-    Integer userID = (Integer) session.getAttribute("userID"); // 从会话中获取 userID
+    Integer userID = (Integer) session.getAttribute("userID");
 
     if (username == null || userRole == null || userID == null) {
         response.sendRedirect("login.jsp");
-        return; // 停止后续代码执行
+        return;
     }
 
-    // 获取用户的计划选择历史
     List<String> planHistory = new ArrayList<>();
+    List<Integer> counts = new ArrayList<>();
     List<Timestamp> selectionTimestamps = new ArrayList<>();
 
     try (Connection conn = DBConnection.getConnection()) {
-        String sql = "SELECT Plan, SelectionTime FROM DronePlanSelection WHERE UserID = ?";
+        String sql = "SELECT Plan, Count, SelectionTime FROM DronePlanSelection WHERE UserID = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, userID); // 使用 Integer 类型的 userID
+        stmt.setInt(1, userID);
 
         ResultSet rs = stmt.executeQuery();
 
         while (rs.next()) {
             planHistory.add(rs.getString("Plan"));
+            counts.add(rs.getInt("Count"));
             selectionTimestamps.add(rs.getTimestamp("SelectionTime"));
         }
     } catch (Exception e) {
@@ -36,7 +36,6 @@
 <head>
     <title>ドローンプランの選択</title>
     <style>
-        /* 页面整体布局 */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -83,6 +82,16 @@
             margin-bottom: 10px;
         }
 
+        .card input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 10px;
+            font-size: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
         .card button {
             display: block;
             width: 100%;
@@ -100,7 +109,6 @@
             background-color: #45a049;
         }
 
-        /* 历史记录显示 */
         table {
             width: 100%;
             margin-top: 20px;
@@ -120,65 +128,82 @@
             background-color: #f4f4f9;
         }
 
-    </style>
-    <script>
-        // 确认清除历史记录
-        function confirmClear() {
-            return confirm("全ての履歴をクリアしますか？この操作は取り消せません！");
+        .details-box {
+            margin-top: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            font-size: 16px;
+            color: #333;
+            line-height: 1.6;
         }
-    </script>
+    </style>
 </head>
 <body>
     <jsp:include page="menu.jsp" />
     <h1>ドローンプランの選択</h1>
     <p>こんにちは、<%= username %>さん！</p>
 
-    <!-- 计划选择卡片 -->
+    <!-- 卡片布局 -->
     <div class="card-container">
-        <!-- 初心者プラン -->
         <div class="card">
-            <h2>初心者プラン</h2>
-            <p>価格：10000</p>
-            <p>土地面積：3000</p>
-            <p>収穫量：5000</p>
-            <p>お米の種類：1</p>
-            <form action="SelectPlanServlet" method="post">
+            <h2>スターター・プラン</h2>
+            <p>契約期間: 1年</p>
+            <p>収穫量: 約146kg（1機）</p>
+            <p>価格: ¥500,000</p>
+            <form action="SelectPlanMultipleServlet" method="post">
                 <input type="hidden" name="userID" value="<%= userID %>">
                 <input type="hidden" name="plan" value="A">
+                <label>選択回数:</label>
+                <input type="number" name="count" min="1" value="1">
                 <button type="submit">このプランを選択</button>
             </form>
         </div>
 
-        <!-- プロフェッショナルプラン -->
         <div class="card">
-            <h2>プロフェッショナルプラン</h2>
-            <p>価格：20000</p>
-            <p>土地面積：5000</p>
-            <p>収穫量：10000</p>
-            <p>お米の種類：3</p>
-            <form action="SelectPlanServlet" method="post">
+            <h2>プロフェッショナル・プラン</h2>
+            <p>契約期間: 3年</p>
+            <p>収穫量: 約292kg（2機）</p>
+            <p>価格: ¥3,000,000</p>
+            <form action="SelectPlanMultipleServlet" method="post">
                 <input type="hidden" name="userID" value="<%= userID %>">
                 <input type="hidden" name="plan" value="B">
+                <label>選択回数:</label>
+                <input type="number" name="count" min="1" value="1">
                 <button type="submit">このプランを選択</button>
             </form>
         </div>
 
-        <!-- スーパープラン -->
         <div class="card">
-            <h2>スーパープラン</h2>
-            <p>価格：50000</p>
-            <p>土地面積：10000</p>
-            <p>収穫量：50000</p>
-            <p>お米の種類：10</p>
-            <form action="SelectPlanServlet" method="post">
+            <h2>アルティメット・プラン</h2>
+            <p>契約期間: 5～10年</p>
+            <p>収穫量: 約584kg（4機）</p>
+            <p>価格: ¥8,000,000</p>
+            <form action="SelectPlanMultipleServlet" method="post">
                 <input type="hidden" name="userID" value="<%= userID %>">
                 <input type="hidden" name="plan" value="C">
+                <label>選択回数:</label>
+                <input type="number" name="count" min="1" value="1">
                 <button type="submit">このプランを選択</button>
             </form>
         </div>
     </div>
 
-    <!-- 计划选择历史记录 -->
+    <!-- 详细说明 -->
+    <div class="details-box">
+        <h2>詳細</h2>
+        <p>収穫回数: 年に3回</p>
+        <p>1回あたりの収穫量: 1機が48kgの収穫</p>
+        <p>年間収穫量計算:</p>
+        <ul>
+            <li>スターター・プラン: 1機 × 3回 × 48kg = 144kg</li>
+            <li>プロフェッショナル・プラン: 2機 × 3回 × 48kg = 288kg</li>
+            <li>アルティメット・プラン: 4機 × 3回 × 48kg = 576kg</li>
+        </ul>
+    </div>
+
+    <!-- プラン選択履歴 -->
     <h2>プラン選択履歴</h2>
     <% if (planHistory.isEmpty()) { %>
         <p>まだプランを選択していません。</p>
@@ -186,25 +211,23 @@
         <table>
             <tr>
                 <th>プラン</th>
+                <th>選択回数</th>
                 <th>選択日時</th>
             </tr>
             <% for (int i = 0; i < planHistory.size(); i++) { %>
                 <tr>
                     <td><%= planHistory.get(i) %></td>
+                    <td><%= counts.get(i) %></td>
                     <td><%= selectionTimestamps.get(i) %></td>
                 </tr>
             <% } %>
         </table>
     <% } %>
 
-    <!-- 清除历史记录 -->
-    <form action="ClearHistoryServlet" method="post" onsubmit="return confirmClear();">
+    <!-- 清空履歴 -->
+    <form action="ClearHistoryServlet" method="post" onsubmit="return confirm('全ての履歴をクリアしますか？');">
         <input type="hidden" name="userID" value="<%= userID %>">
         <button type="submit">全ての履歴をクリア</button>
     </form>
-
-    <!-- 返回主页按钮 -->
-    <button onclick="location.href='index.jsp'">ホームに戻る</button>
-    <button onclick="location.href='cart.jsp'">カートを見る</button>
 </body>
 </html>

@@ -2,8 +2,10 @@
 <%@ page import="java.sql.*, dao.DBConnection" %>
 
 <%
-    // 从会话中获取 userID，类型为 Integer
     Integer userID = (Integer) session.getAttribute("userID");
+    Integer userRole = (Integer) session.getAttribute("userRole");
+    String username = (String) session.getAttribute("username");
+
     if (userID == null) {
         response.sendRedirect("login.jsp");
         return;
@@ -84,7 +86,7 @@
 <body>
     <jsp:include page="menu.jsp" />
     <h1>ショッピングカート</h1>
-
+   
     <%
         int totalPrice = 0;
         boolean hasItems = false;
