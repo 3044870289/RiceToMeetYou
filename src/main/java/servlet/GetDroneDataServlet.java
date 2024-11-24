@@ -25,16 +25,40 @@ public class GetDroneDataServlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
+        String ownParam = request.getParameter("own"); // 获取own参数
+        Integer userID = (Integer) request.getSession().getAttribute("userID");
+
         List<Map<String, Object>> drones = new ArrayList<>();
+        String sql = ""; // 初始化 SQL
+
         try (Connection conn = DBConnection.getConnection()) {
-            String sql = "SELECT ds.droneID, ds.latitude, ds.longitude, ds.altitude, ds.speed, " +
-                         "ds.batteryLevel, dp.planID, dp.planName, dp.contractDuration, dp.harvestAmount, dp.price " +
-                         "FROM DroneStatus ds " +
-                         "JOIN DronePlans dp ON ds.planID = dp.planID";
+            // 确保 userID 存在，或者为全局显示的情况设置 SQL
+            if ("true".equalsIgnoreCase(ownParam) && userID != null) {
+                sql = "SELECT ds.droneID, ds.latitude, ds.longitude, ds.altitude, ds.speed, " +
+                      "ds.batteryLevel, dp.planID, dp.planName, dp.contractDuration, dp.harvestAmount, dp.price " +
+                      "FROM DroneStatus ds " +
+                      "JOIN DronePlans dp ON ds.planID = dp.planID " +
+                      "WHERE ds.userID = ?";
+                System.out.println("Filtered SQL (own=true): " + sql + ", userID=" + userID);
+            } else {
+                sql = "SELECT ds.droneID, ds.latitude, ds.longitude, ds.altitude, ds.speed, " +
+                      "ds.batteryLevel, dp.planID, dp.planName, dp.contractDuration, dp.harvestAmount, dp.price " +
+                      "FROM DroneStatus ds " +
+                      "JOIN DronePlans dp ON ds.planID = dp.planID";
+                System.out.println("General SQL (own=false): " + sql);
+            }
 
+            // 准备 SQL 并绑定参数
             PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+            if ("true".equalsIgnoreCase(ownParam) && userID != null) {
+                stmt.setInt(1, userID);
+            }
 
+            // 执行查询
+            ResultSet rs = stmt.executeQuery();
+            System.out.println("Query executed, fetching results...");
+
+            // 解析结果
             while (rs.next()) {
                 Map<String, Object> drone = new HashMap<>();
                 drone.put("droneID", rs.getInt("droneID"));
@@ -51,6 +75,7 @@ public class GetDroneDataServlet extends HttpServlet {
 
                 drones.add(drone);
             }
+            System.out.println("Query result size: " + drones.size());
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -58,6 +83,7 @@ public class GetDroneDataServlet extends HttpServlet {
             return;
         }
 
+        // 返回 JSON 数据
         Gson gson = new Gson();
         response.getWriter().write(gson.toJson(drones));
     }

@@ -18,7 +18,7 @@ public class ClearPlanHistoryServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 获取用户 ID
+        // 获取当前会话中的用户ID
         Integer userID = (Integer) request.getSession().getAttribute("userID");
         if (userID == null) {
             response.sendRedirect("login.jsp");
@@ -28,15 +28,21 @@ public class ClearPlanHistoryServlet extends HttpServlet {
         try (Connection conn = DBConnection.getConnection()) {
             // 删除用户的方案选择记录
             String clearHistorySQL = "DELETE FROM DronePlanSelection WHERE UserID = ?";
-            PreparedStatement stmt = conn.prepareStatement(clearHistorySQL);
-            stmt.setInt(1, userID);
-            int rowsAffected = stmt.executeUpdate();
+            PreparedStatement clearHistoryStmt = conn.prepareStatement(clearHistorySQL);
+            clearHistoryStmt.setInt(1, userID);
+            int historyRowsAffected = clearHistoryStmt.executeUpdate();
 
-            // 重定向回首页并显示成功消息
-            if (rowsAffected > 0) {
+            // 删除用户的无人机记录
+            String deleteDronesSQL = "DELETE FROM DroneStatus WHERE userID = ?";
+            PreparedStatement deleteDronesStmt = conn.prepareStatement(deleteDronesSQL);
+            deleteDronesStmt.setInt(1, userID);
+            int dronesRowsAffected = deleteDronesStmt.executeUpdate();
+
+            // 根据执行结果返回成功或信息提示
+            if (historyRowsAffected > 0 || dronesRowsAffected > 0) {
                 response.sendRedirect("index.jsp?success=clear_plan_history");
             } else {
-                response.sendRedirect("index.jsp?info=no_plan_history");
+                response.sendRedirect("index.jsp?info=no_plan_history_or_drones");
             }
         } catch (Exception e) {
             e.printStackTrace();

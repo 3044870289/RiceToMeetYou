@@ -134,18 +134,19 @@
     <button class="button" onclick="location.href='logout.jsp'">ログアウト</button>
 
     <!-- 消息显示 -->
-    <%
-        String successMessage = request.getParameter("success");
-        String errorMessage = request.getParameter("error");
-        String infoMessage = request.getParameter("info");
-    %>
-    <% if ("clear_plan_history".equals(successMessage)) { %>
-        <p class="message success">プラン選択履歴を正常に清空しました。</p>
-    <% } else if ("clear_plan_history".equals(errorMessage)) { %>
-        <p class="message error">プラン選択履歴を清空する際にエラーが発生しました。</p>
-    <% } else if ("no_plan_history".equals(infoMessage)) { %>
-        <p class="message info">削除するプラン選択履歴がありません。</p>
-    <% } %>
+   <% 
+    String successMessage = request.getParameter("success");
+    String infoMessage = request.getParameter("info");
+    String errorMessage = request.getParameter("error");
+%>
+
+<% if ("clear_plan_history".equals(successMessage)) { %>
+    <p class="success-message">プラン履歴と関連ドローンが正常に削除されました。</p>
+<% } else if ("no_plan_history_or_drones".equals(infoMessage)) { %>
+    <p class="info-message">削除するプラン履歴やドローンがありません。</p>
+<% } else if ("clear_plan_history".equals(errorMessage)) { %>
+    <p class="error-message">プラン履歴の削除中にエラーが発生しました。</p>
+<% } %>
 
     <h2>購入履歴</h2>
     <table>
