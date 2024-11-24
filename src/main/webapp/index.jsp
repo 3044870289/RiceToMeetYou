@@ -48,6 +48,28 @@
     } catch (Exception e) {
         e.printStackTrace();
     }
+    
+    // 随机标语及其权重
+    String[] slogans = {
+        "稲穂が実るように、あなたの人生も輝きますように！",
+        "空を飛ぶドローンのように、稲神が幸せを運びます！",
+        "天空の稲神からのお告げ：今すぐお米を食べましょう！",
+        "天空のお米から地上の幸せまで、稲神様が守っています。",
+        "ドローンの稲神、あなたに幸運を届けます！"
+    };
+    int[] weights = {30, 25, 20, 15, 10}; // 权重之和应为100
+
+    // 计算随机标语
+    String selectedSlogan = "";
+    int randomValue = new Random().nextInt(100); // 生成 0-99 的随机数
+    int cumulativeWeight = 0;
+    for (int i = 0; i < slogans.length; i++) {
+        cumulativeWeight += weights[i];
+        if (randomValue < cumulativeWeight) {
+            selectedSlogan = slogans[i];
+            break;
+        }
+    }
 %>
 
 <html lang="ja">
@@ -124,6 +146,8 @@
 <body>
     <jsp:include page="menu.jsp" />
     <h1>ホームへようこそ</h1>
+    <p class="slogan"><%= selectedSlogan %></p>
+    
     <p><%= username %> 様、ようこそ！</p>
 
     <% if (userRole != null && userRole.equals(1)) { %>

@@ -28,13 +28,16 @@ public class SelectDronePlanServlet extends HttpServlet {
 
         try (Connection conn = DBConnection.getConnection()) {
             int planID = Integer.parseInt(planIDStr);
+            int userID = Integer.parseInt(userIDStr);
 
             // 生成随机位置
             double latitude = GeoUtils.generateRandomLatitude();
             double longitude = GeoUtils.generateRandomLongitude();
+            System.out.println("Inserting Latitude: " + latitude + ", Longitude: " + longitude);
+
 
             // 插入数据到 DroneStatus 表
-            String sql = "INSERT INTO DroneStatus (latitude, longitude, altitude, speed, batteryLevel, planID) VALUES (?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO DroneStatus (latitude, longitude, altitude, speed, batteryLevel, planID, userID) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setDouble(1, latitude);
             stmt.setDouble(2, longitude);
@@ -42,6 +45,7 @@ public class SelectDronePlanServlet extends HttpServlet {
             stmt.setInt(4, 0); // 初始速度
             stmt.setInt(5, 100); // 初始电池电量
             stmt.setInt(6, planID);
+            stmt.setInt(7, userID);
             stmt.executeUpdate();
 
             response.setContentType("application/json");
