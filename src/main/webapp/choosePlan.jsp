@@ -225,6 +225,7 @@
 
 <div class="actions">
     <button onclick="togglePlanHistory()">プラン履歴を表示/非表示</button>
+      <button class="button" onclick="location.href='droneMap.jsp'">ドローンの位置を見る</button>
 </div>
 
 <script>
