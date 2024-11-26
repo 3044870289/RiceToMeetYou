@@ -172,6 +172,29 @@
         .actions button:hover {
             background-color: #45a049;
         }
+        .box {
+        	
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            margin-top: 20px;
+            padding: 20px;
+        }
+
+        .box h2 {
+            font-size: 18px;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .box p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+            margin: 5px 0;
+        }
     </style>
 </head>
 <body>
@@ -186,10 +209,11 @@
     <div class="card-container">
         <% for (Map<String, Object> plan : plans) { %>
             <div class="card">
+           
                 <h2><%= plan.get("planName") %></h2>
+                 <h1>価格: ¥<%= plan.get("price") %></h1>
                 <p>契約期間: <%= plan.get("duration") %></p>
                 <p>収穫量: 約<%= plan.get("amount") %>kg</p>
-                <p>価格: ¥<%= plan.get("price") %></p>
                 <form action="SelectPlanMultipleServlet" method="post">
                     <input type="hidden" name="userID" value="<%= userID %>">
                     <input type="hidden" name="planID" value="<%= plan.get("planID") %>">
@@ -199,6 +223,13 @@
                 </form>
             </div>
         <% } %>
+    </div>
+    <div class="container">
+     <div class="box">
+            <h2>統一の説明</h2>
+            <p>すべてのプランは以下のルールを守ります。</p>
+            <p></p>
+        </div>
     </div>
 
     <h2>プラン選択履歴</h2>
