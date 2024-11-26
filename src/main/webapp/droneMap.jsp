@@ -5,9 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <title>ドローンリアルタイムマップ</title>
-    <!-- 加载 CSS -->
     <style>
-        #map { height: 500px; width: 100%; }
+        #map { height: 800px; width: 100%; }
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f9f9f9; }
         h1, h2 { text-align: center; color: #333; }
         .controls {
@@ -50,6 +49,9 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+             display: inline-block !important;
+    visibility: visible !important;
+    z-index: 9999 !important;
         }
         .button:hover {
             background-color: #45a049;
@@ -61,14 +63,18 @@
     <jsp:include page="menu.jsp" />
     <h1>ドローンリアルタイムマップ</h1>
 
+    <!-- 控制部分 -->
     <div class="controls">
         <button id="showOwnDrones">自分のドローンを表示</button>
         <button id="showAllDrones">すべてのドローンを表示</button>
+        <!--   <button id="moveMultipleDrones">複数ドローンを移動</button>  功能有点垃圾 ，只能将固定前几个无人机移动到固定的几个坐标-->
     </div>
 
+    <!-- 地图显示 -->
     <div id="map"></div>
 
-    <!-- 从会话中获取用户ID -->
+    <!-- 显示历史记录 -->
+    <h2>プラン選択履歴</h2>
     <%
         Integer userID = (Integer) session.getAttribute("userID");
         if (userID == null) {
@@ -78,7 +84,6 @@
 
         List<Map<String, String>> planSelectionHistory = new ArrayList<>();
 
-        // 查询プラン選択履歴
         try (Connection conn = DBConnection.getConnection()) {
             String planQuery = "SELECT dp.planName, dps.Count, dps.SelectionTime FROM DronePlanSelection dps " +
                                "INNER JOIN DronePlans dp ON dps.planID = dp.planID WHERE dps.UserID = ?";
@@ -98,7 +103,6 @@
         }
     %>
 
-    <h2>プラン選択履歴</h2>
     <table>
         <tr>
             <th>プラン</th>
@@ -120,14 +124,18 @@
     </table>
 
     <% if (!planSelectionHistory.isEmpty()) { %>
-    <form action="ClearPlanHistoryServlet" method="post" onsubmit="return confirm('プラン選択履歴を清空しますか？');">
-        <button class="button" type="submit">プラン選択履歴を清空</button>     
-    </form>
+        <form action="ClearPlanHistoryServlet" method="post" onsubmit="return confirm('プラン選択履歴を清空しますか？');">
+            <button class="button" type="submit">プラン選択履歴を清空</button>     
+        </form>
     <% } %>
 
-    <!-- 加载 droneMap.js -->
+    <!-- 加载 JavaScript 文件 -->
     <script src="/RiceToMeetYou/js/droneMap.js"></script>
     <!-- 异步加载 Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJCDwqKJFUaPhL2xz76qOOSKDCgBKj7OM&callback=initMap" async defer></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAJCDwqKJFUaPhL2xz76qOOSKDCgBKj7OM&callback=initMap"
+        async
+        defer
+    ></script>
 </body>
 </html>
