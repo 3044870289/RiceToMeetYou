@@ -72,6 +72,9 @@ public class GetDroneDataServlet extends HttpServlet {
                 drone.put("contractDuration", rs.getString("contractDuration"));
                 drone.put("harvestAmount", rs.getInt("harvestAmount"));
                 drone.put("price", rs.getInt("price"));
+             // 修改 drone 数据加入 timeLeft
+                //drone.put("timeLeft", rs.getTimestamp("endTime").getTime() - System.currentTimeMillis());
+
 
                 drones.add(drone);
             }

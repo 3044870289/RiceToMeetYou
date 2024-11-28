@@ -23,11 +23,6 @@ function initMap() {
         console.log("すべてのドローンボタンが押された！");
         loadDrones(false);
     });
-
-    document.getElementById("moveMultipleDrones").addEventListener("click", () => {
-        console.log("複数ドローン移動ボタンが押された！");
-        testMoveMultipleDrones(); // 批量移动无人机
-    });
 }
 
 function loadDrones(own) {
@@ -55,7 +50,7 @@ function loadDrones(own) {
                     <p>収穫量: ${drone.harvestAmount} kg</p>
                     <p>価格: ¥${drone.price}</p>
                     <button onclick="initiateMoveDrone(${drone.droneID})">移動</button>
-                    
+
                 `;
 
                 const infoWindow = new google.maps.InfoWindow({
@@ -79,93 +74,115 @@ function clearMarkers() {
     markers = [];
 }
 
-function initiateMoveDrone(droneID) {
-    selectedDroneID = droneID;
-    alert("マップ上で新しい位置をクリックしてください。");
+// 单个无人机动画函数
+function animateMarker(marker, targetLat, targetLng, duration, onComplete) {
+    const startPos = marker.getPosition();
+    const startLat = startPos.lat();
+    const startLng = startPos.lng();
 
-    // 添加地图点击事件监听
-    map.addListener("click", handleMapClick);
+    const deltaLat = targetLat - startLat;
+    const deltaLng = targetLng - startLng;
+
+    const steps = 120; // 总帧数
+    const interval = duration / steps; // 每帧间隔时间
+    let step = 0;
+
+    function easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function move() {
+        step++;
+        const progress = step / steps;
+        const easedProgress = easeInOutQuad(progress); // 使用缓动函数平滑动画
+
+        const currentLat = startLat + deltaLat * easedProgress;
+        const currentLng = startLng + deltaLng * easedProgress;
+
+        marker.setPosition(new google.maps.LatLng(currentLat, currentLng));
+
+        if (step < steps) {
+            setTimeout(move, interval); // 下一帧
+        } else if (onComplete) {
+            onComplete(); // 动画完成后的回调
+        }
+    }
+
+    move(); // 开始动画
 }
 
-function handleMapClick(event) {
-    if (!selectedDroneID) return;
-
-    const newLat = event.latLng.lat();
-    const newLng = event.latLng.lng();
-
-    console.log(`Moving drone ${selectedDroneID} to new location: ${newLat}, ${newLng}`);
-
-    fetch(`/RiceToMeetYou/updateDroneLocation`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            droneID: selectedDroneID,
-            latitude: newLat,
-            longitude: newLng,
-        }),
-    })
-        .then(response => response.json())
-        .then(data => {
-            console.log("Server response for drone move:", data);
-            if (data.status === "success") {
-                alert("ドローンの位置が更新されました！");
-                loadDrones(false); // 刷新地图
-            } else {
-                alert(`位置更新に失敗しました：${data.message}`);
-            }
-        })
-        .catch(error => {
-            console.error("Error updating drone location:", error);
-            alert("エラーが発生しました。");
-        })
-        .finally(() => {
-            // 移除点击事件监听
-            google.maps.event.clearListeners(map, "click");
-            selectedDroneID = null;
-        });
-}
-
-// 批量移动无人机动画
+// 批量移动多个无人机
 function animateMultipleMarkers(markers, targets, duration) {
     if (markers.length !== targets.length) {
-        console.error("Markers and targets length mismatch!");
+        console.error("Markers and targets arrays must have the same length!");
         return;
     }
 
     markers.forEach((marker, index) => {
         const target = targets[index];
-        if (!target) return;
-
-        const startPos = marker.getPosition();
-        const endPos = new google.maps.LatLng(target.lat, target.lng);
-
-        const deltaLat = (endPos.lat() - startPos.lat()) / (duration / 20);
-        const deltaLng = (endPos.lng() - startPos.lng()) / (duration / 20);
-
-        let step = 0;
-        const steps = duration / 20;
-
-        function move() {
-            step++;
-            const lat = startPos.lat() + deltaLat * step;
-            const lng = startPos.lng() + deltaLng * step;
-            marker.setPosition(new google.maps.LatLng(lat, lng));
-
-            if (step < steps) {
-                requestAnimationFrame(move);
-            }
+        if (target && target.lat !== undefined && target.lng !== undefined) {
+            animateMarker(marker, target.lat, target.lng, duration, () => {
+                console.log(`Drone ${index + 1} finished moving.`);
+            });
+        } else {
+            console.error(`Invalid target for marker ${index + 1}:`, target);
         }
-        move();
     });
 }
 
-// 测试批量移动无人机
+// 测试批量移动
 function testMoveMultipleDrones() {
     const targets = [
-        { lat: 35.6895, lng: 139.692 }, // 第1个无人机目标位置
-        { lat: 35.6897, lng: 139.700 }, // 第2个无人机目标位置
-        { lat: 35.6900, lng: 139.710 }  // 第3个无人机目标位置
+        { lat: 35.6895, lng: 139.692 }, // 新位置1
+        { lat: 35.6897, lng: 139.700 }, // 新位置2
+        { lat: 35.6900, lng: 139.710 }  // 新位置3
     ];
 
-    animateMultipleMarkers(markers.slice(0, 3), targets, 2000); // 移动前3个无人机
+    animateMultipleMarkers(markers.slice(0, 3), targets, 2000); // 测试移动前3个无人机
+}
+
+function initiateMoveDrone(droneID) {
+    selectedDroneID = droneID;
+    alert("マップ上で新しい位置をクリックしてください。");
+
+    map.addListener("click", event => {
+        if (!selectedDroneID) return;
+
+        const newLat = event.latLng.lat();
+        const newLng = event.latLng.lng();
+
+        console.log(`Moving drone ${selectedDroneID} to new location: ${newLat}, ${newLng}`);
+
+        // 单个无人机移动
+        const marker = markers.find(m => m.getTitle() === `ドローン ${droneID}`);
+        if (marker) {
+            animateMarker(marker, newLat, newLng, 2000, () => {
+                console.log(`Drone ${droneID} animation completed.`);
+            });
+        }
+
+        fetch(`/RiceToMeetYou/updateDroneLocation`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                droneID: selectedDroneID,
+                latitude: newLat,
+                longitude: newLng,
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("ドローンの位置が更新されました！");
+                } else {
+                    alert(`位置更新に失敗しました：${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error("Error updating drone location:", error);
+                alert("エラーが発生しました。");
+            });
+
+        selectedDroneID = null;
+    });
 }

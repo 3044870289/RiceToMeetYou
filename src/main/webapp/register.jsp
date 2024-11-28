@@ -1,112 +1,64 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>ユーザー登録</title>
+    <link rel="stylesheet" href="css/loginstyle.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f9f9;
+        /* 新增样式 */
+        .message {
+            color: white; /* 设置文字为白色 */
+            font-weight: bold; /* 设置文字加粗 */
+            text-align: center; /* 居中显示（可选，根据需求） */
         }
 
-        .container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        .message a {
+            color: #4CAF50; /* 超链接为绿色 */
+            text-decoration: none; /* 去除下划线 */
         }
 
-        h1 {
-            text-align: center;
-            color: #4CAF50;
-            margin-bottom: 20px;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="email"] {
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            font-size: 14px;
-        }
-
-        button {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        p {
-            text-align: center;
-            color: #333;
-            margin-top: 10px;
-        }
-
-        p a {
-            color: #4CAF50;
-            text-decoration: none;
-        }
-
-        p a:hover {
-            text-decoration: underline;
-        }
-
-        .error {
-            color: red;
-            margin-bottom: 15px;
-            text-align: center;
+        .message a:hover {
+            color: #45a049; /* 鼠标悬停时的颜色 */
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>新規登録</h1>
+    <div class="box">
+        <h2>新規登録</h2>
 
         <% if (request.getParameter("error") != null) { %>
-            <p class="error">登録に失敗しました。入力内容をご確認ください。</p>
+            <p class="message" style="color: red;">登録に失敗しました。入力内容をご確認ください。</p>
         <% } %>
 
         <form action="RegisterServlet" method="post">
-            <label for="username">ユーザー名:</label>
-            <input type="text" id="username" name="username" required>
+            <div class="input-box">
+                <label for="username">ユーザー名:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
             
-            <label for="password">パスワード:</label>
-            <input type="password" id="password" name="password" required>
+            <div class="input-box">
+                <label for="password">パスワード:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
             
-            <label for="email">メールアドレス:</label>
-            <input type="email" id="email" name="email">
+            <div class="input-box">
+                <label for="email">メールアドレス:</label>
+                <input type="email" id="email" name="email">
+            </div>
             
-            <label for="address">住所:</label>
-            <input type="text" id="address" name="address">
+            <div class="input-box">
+                <label for="address">住所:</label>
+                <input type="text" id="address" name="address">
+            </div>
             
-            <button type="submit">登録</button>
+            <div class="btn-box">
+                <button type="submit">登録</button>
+            </div>
         </form>
 
-        <p>すでにアカウントをお持ちですか？<a href="login.jsp">ログインはこちら</a></p>
+        <!-- "すでにアカウントをお持ちですか" 用白色加粗 -->
+        <p class="message">すでにアカウントをお持ちですか？<a href="login.jsp">ログインはこちら</a></p>
     </div>
 </body>
 </html>
