@@ -50,155 +50,12 @@
 <html>
 <head>
     <title>ドローンプランの選択</title>
-     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f9;
-        }
-
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        .card-container {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            width: 30%;
-            padding: 20px;
-            box-sizing: border-box;
-            transition: transform 0.3s;
-        }
-
-        .card:hover {
-            transform: translateY(-10px);
-        }
-
-        .card h2 {
-            font-size: 24px;
-            color: #333;
-            text-align: center;
-        }
-
-        .card p {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .card input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 10px;
-            font-size: 16px;
-            box-sizing: border-box;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .card button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .card button:hover {
-            background-color: #45a049;
-        }
-
-        table {
-            width: 100%;
-            margin-top: 20px;
-            border-collapse: collapse;
-        }
-
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-
-        th, td {
-            padding: 8px 12px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f4f4f9;
-        }
-
-        .details-box {
-            margin-top: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            font-size: 16px;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        .actions {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .actions button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .actions button:hover {
-            background-color: #45a049;
-        }
-        .box {
-        	
-            background-color: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            margin-top: 20px;
-            padding: 20px;
-        }
-
-        .box h2 {
-            font-size: 18px;
-            color: #4CAF50;
-            margin-bottom: 15px;
-        }
-
-        .box p {
-            font-size: 14px;
-            color: #555;
-            line-height: 1.6;
-            margin: 5px 0;
-        }
-    </style>
+    <link rel="stylesheet" href="css/steamstyle.css">
 </head>
 <body>
     <jsp:include page="menu.jsp" />
+     <div class="container">
+        <div class="module">
     <h1>ドローンプランの選択</h1>
     <div class="actions">
         <% if (userRole.equals(1)) { %>
@@ -258,6 +115,9 @@
     <button onclick="togglePlanHistory()">プラン履歴を表示/非表示</button>
       <button class="button" onclick="location.href='droneMap.jsp'">ドローンの位置を見る</button>
 </div>
+</div>
+</div>
+
 
 <script>
     function togglePlanHistory() {

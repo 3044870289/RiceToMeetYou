@@ -31,127 +31,48 @@
     }
 %>
 
+<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <title>ショップ</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
-        }
-        h1 {
-            text-align: center;
-            color: #4CAF50;
-        }
-        .product-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-        .product-card {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            width: 300px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            background-color: white;
-        }
-        .product-card img {
-            width: 100%;
-            height: auto;
-            max-height: 200px;
-            object-fit: contain;
-        }
-        .product-card h2 {
-            font-size: 18px;
-            color: #333;
-        }
-        .product-card p {
-            font-size: 14px;
-            color: #666;
-        }
-        .product-card button {
-            padding: 10px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        .product-card button:hover {
-            background-color: #45a049;
-        }
-        .actions {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .empty-shop {
-            text-align: center;
-            font-size: 18px;
-            color: #888;
-            margin-top: 30px;
-        }
-        .actions {
-        margin-top: 20px;
-        text-align: center;
-    }
-
-    .actions .admin-button {
-        display: inline-block;
-        padding: 12px 30px; /* 长度调整 */
-        font-size: 16px;
-        font-weight: bold;
-        color: white;
-        background-color: #4CAF50; /* 绿色背景 */
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        text-decoration: none; /* 去掉超链接默认下划线 */
-    }
-
-    .actions .admin-button:hover {
-        background-color: #45a049; /* 鼠标悬停时的颜色 */
-    }
-    </style>
+    <link rel="stylesheet" href="css/steamstyle.css">
 </head>
 <body>
-<jsp:include page="menu.jsp" />
-    <h1>ショップ</h1>
+    <jsp:include page="menu.jsp" />    
+    <div class="container">
+      <div class="module">
+        <h1>ショップ</h1>
 
-    <% if (products.isEmpty()) { %>
-        <p class="empty-shop">現在、ショップに商品はありません。</p>
-    <% } else { %>
-        <div class="product-container">
-            <% for (Map<String, Object> product : products) { %>
-                <div class="product-card">
-                    <img src="images/<%= product.get("photo") %>" alt="<%= product.get("name") %>">
-                    <h2><%= product.get("name") %></h2>
-                    <p><%= product.get("comment") %></p>
-                    <p>価格: ¥<%= product.get("price") %></p>
-                    <p>在庫: <%= product.get("stock") %> 個</p>
-                    <form action="AddToCartServlet" method="post">
-                        <input type="hidden" name="userID" value="<%= session.getAttribute("userID") %>">
-                        <input type="hidden" name="shopID" value="<%= product.get("id") %>">
-                        <input type="number" name="quantity" min="1" value="1" required>
-                        <button type="submit">カートに追加</button>
-                    </form>
-                </div>
+        <% if (products.isEmpty()) { %>
+            <p class="empty-shop">現在、ショップに商品はありません。</p>
+        <% } else { %>
+            <div class="product-container">
+                <% for (Map<String, Object> product : products) { %>
+                    <div class="product-card">
+                        <img src="images/<%= product.get("photo") %>" alt="<%= product.get("name") %>">
+                        <h2><%= product.get("name") %></h2>
+                        <p><%= product.get("comment") %></p>
+                        <p>価格: ¥<%= product.get("price") %></p>
+                        <p>在庫: <%= product.get("stock") %> 個</p>
+                        <form action="AddToCartServlet" method="post">
+                            <input type="hidden" name="userID" value="<%= session.getAttribute("userID") %>">
+                            <input type="hidden" name="shopID" value="<%= product.get("id") %>">
+                            <input type="number" name="quantity" min="1" value="1" required>
+                            <button type="submit">カートに追加</button>
+                        </form>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
+
+        <div class="actions">
+            <% if (userRole.equals(1)) { %>
+                <a href="manageShop.jsp" class="button">商品を管理</a>
             <% } %>
+            <button onclick="location.href='cart.jsp'" class="button">カートを見る</button>
         </div>
-    <% } %>
-
-<div class="actions">
-    <% if (userRole.equals(1)) { %>
-        <!-- 管理员按钮 -->
-        <a href="manageShop.jsp" class="admin-button">商品を管理</a>
-    <% } %>
-</div>
-
+       </div>
+    </div>
 </body>
 </html>

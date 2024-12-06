@@ -51,13 +51,13 @@
     
     // 随机标语及其权重
     String[] slogans = {
-        "稲穂が実るように、あなたの人生も輝きますように！",
-        "空を飛ぶドローンのように、稲神が幸せを運びます！",
-        "天空の稲神からのお告げ：今すぐお米を食べましょう！",
-        "天空のお米から地上の幸せまで、稲神様が守っています。",
-        "ドローンの稲神、あなたに幸運を届けます！"
+        "⭐️稲穂が実るように、あなたの人生も輝きますように！⭐",
+        "⭐⭐空を飛ぶドローンのように、稲神が幸せを運びます！⭐⭐",
+        "⭐⭐天空の稲神からのお告げ：今すぐお米を食べましょう！⭐⭐",
+        "⭐⭐⭐天空のお米から地上の幸せまで、稲神様が守っています。⭐⭐⭐",
+        "⭐⭐⭐⭐⭐ドローンの稲神、あなたに幸運を届けます！⭐⭐⭐⭐⭐"
     };
-    int[] weights = {30, 25, 20, 15, 10}; // 权重之和应为100
+    int[] weights = {30, 30, 25, 10, 5}; // 权重之和应为100
 
     // 计算随机标语
     String selectedSlogan = "";
@@ -75,151 +75,119 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>ホーム</title>
+    <link rel="stylesheet" href="css/steamstyle.css">
+    <title>ホーム</title>  
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f9f9f9;
+        /* 标语淡入 + 打字机效果 */
+        .slogan {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4CAF50;
+            white-space: nowrap;
+            overflow: hidden;
+            animation: typing 3s steps(120, end), blink-caret 0.5s step-end infinite;
         }
 
-        h1, h2 {
-            color: #333;
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%; /* 完全显示 */
+            }
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
+        @keyframes blink-caret {
+            from, to {
+                border-color: transparent;
+            }
+            50% {
+                border-color: #4CAF50;
+            }
         }
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
+        /* 按钮容器居中 */
+        .button-container {
             text-align: center;
+            margin-top: 20px;
         }
 
-        th {
-            background-color: #f2f2f2;
-        }
-
-        .button {
-            padding: 10px 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .button:hover {
-            background-color: #45a049;
-        }
-
-        .message {
-            margin: 10px 0;
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .success {
-            color: green;
-            background-color: #e8f5e9;
-        }
-
-        .error {
-            color: red;
-            background-color: #ffebee;
-        }
-
-        .info {
-            color: blue;
-            background-color: #e3f2fd;
+        .button-container button {
+            margin: 10px; /* 按钮之间的间距 */
         }
     </style>
 </head>
 <body>
     <jsp:include page="menu.jsp" />
-    <h1>ホームへようこそ</h1>
-    <p class="slogan"><%= selectedSlogan %></p>
-    
-    <p><%= username %> 様、ようこそ！</p>
+    <div class="container">
+        <div class="module">
+            <h1>ホームへようこそ</h1>
+            <p class="slogan" id="slogan"></p>
+            <p><%= username %> 様、ようこそ！</p>
 
-    <% if (userRole != null && userRole.equals(1)) { %>
-        <button class="button" onclick="location.href='admin.jsp'">ユーザー管理</button>
-    <% } else if (userRole.equals(2)) { %>
-        <button class="button" onclick="location.href='user.jsp'">個人情報編集</button>
-    <% } %>
-    <button class="button" onclick="location.href='logout.jsp'">ログアウト</button>
+            <div class="button-container">
+                <% if (userRole != null && userRole.equals(1)) { %>
+                    <button class="button" onclick="location.href='admin.jsp'">ユーザー管理</button>
+                <% } %>
+                <button class="button" onclick="location.href='logout.jsp'">ログアウト</button>
+            </div>
 
-    <!-- 消息显示 -->
-   <% 
-    String successMessage = request.getParameter("success");
-    String infoMessage = request.getParameter("info");
-    String errorMessage = request.getParameter("error");
-%>
-
-<% if ("clear_plan_history".equals(successMessage)) { %>
-    <p class="success-message">プラン履歴と関連ドローンが正常に削除されました。</p>
-<% } else if ("no_plan_history_or_drones".equals(infoMessage)) { %>
-    <p class="info-message">削除するプラン履歴やドローンがありません。</p>
-<% } else if ("clear_plan_history".equals(errorMessage)) { %>
-    <p class="error-message">プラン履歴の削除中にエラーが発生しました。</p>
-<% } %>
-
-    <h2>購入履歴</h2>
-    <table>
-        <tr>
-            <th>購入金額</th>
-            <th>購入日時</th>
-            <th>詳細</th>
-        </tr>
-        <% for (Map<String, String> record : purchaseHistory) { %>
-            <tr>
-                <td>¥<%= record.get("totalAmount") %></td>
-                <td><%= record.get("purchaseTime") %></td>
-                <td>
-                    <form action="PurchaseDetailsServlet" method="get">
-                        <input type="hidden" name="purchaseID" value="<%= record.get("purchaseID") %>">
-                        <button class="button" type="submit">詳細を見る</button>
-                    </form>
-                </td>
-            </tr>
-        <% } %>
-    </table>
-
-    <h2>プラン選択履歴</h2>
-    <table>
-        <tr>
-            <th>プラン</th>
-            <th>選択回数</th>
-            <th>選択日時</th>
-        </tr>
-        <% if (planSelectionHistory.isEmpty()) { %>
-            <tr>
-                <td colspan="3">プラン選択履歴がありません。</td>
-            </tr>
-        <% } else { 
-            for (Map<String, String> record : planSelectionHistory) { %>
+            <h2>購入履歴</h2>
+            <table>
                 <tr>
-                    <td><%= record.get("plan") %></td>
-                    <td><%= record.get("count") %></td>
-                    <td><%= record.get("selectionTime") %></td>
+                    <th>購入金額</th>
+                    <th>購入日時</th>
+                    <th>詳細</th>
                 </tr>
-        <% } } %>
-    </table>
+                <% for (Map<String, String> record : purchaseHistory) { %>
+                    <tr>
+                        <td>¥<%= record.get("totalAmount") %></td>
+                        <td><%= record.get("purchaseTime") %></td>
+                        <td>
+                            <form action="PurchaseDetailsServlet" method="get">
+                                <input type="hidden" name="purchaseID" value="<%= record.get("purchaseID") %>">
+                                <button class="button" type="submit">詳細を見る</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% } %>
+            </table>
 
-   <% if (!planSelectionHistory.isEmpty()) { %>
-    <form action="ClearPlanHistoryServlet" method="post" onsubmit="return confirm('プラン選択履歴を清空しますか？');">
-        <button class="button" type="submit">プラン選択履歴を清空</button>     
-    </form>
-    <button class="button" onclick="location.href='droneMap.jsp'">ドローンの位置を見る</button>
-<% } %>
+            <h2>プラン選択履歴</h2>
+            <table>
+                <tr>
+                    <th>プラン</th>
+                    <th>選択回数</th>
+                    <th>選択日時</th>
+                </tr>
+                <% if (planSelectionHistory.isEmpty()) { %>
+                    <tr>
+                        <td colspan="3">プラン選択履歴がありません。</td>
+                    </tr>
+                <% } else { 
+                    for (Map<String, String> record : planSelectionHistory) { %>
+                        <tr>
+                            <td><%= record.get("plan") %></td>
+                            <td><%= record.get("count") %></td>
+                            <td><%= record.get("selectionTime") %></td>
+                        </tr>
+                <% } } %>
+            </table>
+            
+            <div class="button-container">
+                <button class="button" onclick="location.href='droneMap.jsp'">ドローンの位置を見る</button>
+                <form action="ClearPlanHistoryServlet" method="post" style="display: inline;">
+                    <button class="button" type="submit">プラン選択履歴を清空</button>
+                </form>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        // 设置标语的文字内容
+        const sloganText = "<%= selectedSlogan %>";
+        const sloganElement = document.getElementById("slogan");
+        sloganElement.innerText = sloganText; // 初始化内容
+    </script>
 </body>
 </html>
