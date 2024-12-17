@@ -1,0 +1,278 @@
+ * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Main Section */
+.main-section {
+    position: relative;
+    height: 100vh;
+    background-image: url('test.jpg');
+    background-position: center center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Logo Text */
+.logo-text {
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    color: white;
+    font-weight: bold;
+    text-align: left;
+}
+
+.logo-text h1 {
+    font-size: 160px;
+    margin: 0;
+}
+
+.logo-text h2 {
+    font-size: 40px;
+    margin: 0;
+}
+
+/* Left bottom floating buttons */
+.floating-buttons {
+    position: fixed; /* Fixed position */
+    left: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000; /* Ensures buttons stay on top */
+}
+
+.button {
+    padding: 10px 20px;
+    border-radius: 15px;
+    background-color: #212121;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* Right top icon buttons */
+.icon-buttons {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 20px;
+}
+
+.icon {
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+}
+
+/* Common background for description and floating field sections */
+.common-background {
+    background-color: #f0f0f0;
+}
+
+/* First Description Section */
+.description-section {
+    padding: 50px;
+    align-items: center;
+}
+
+.description-section h2 {
+    font-size: 24px;
+    color: #333;
+    margin-left: 30px;
+}
+
+.description-section p {
+    font-size: 18px;
+    color: #555;
+}
+
+/* Two images in the left side (vertical arrangement) */
+.description-section img {
+    width: 45%;
+    margin-bottom: 20px;
+}
+
+/* Color Section with centered images (3 different color backgrounds for images) */
+.color-section {
+    display: flex;
+    height: 700px;
+}
+
+.color-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.color1 { background-color: #87A686; }
+.color2 { background-color: #F2E8C9; }
+.color3 { background-color: #F2B872; }
+
+.color-item img {
+    width: 50%; /* Adjust the size as needed */
+    height: auto;
+    position: absolute;
+}
+
+.floating-field {
+    position: relative; /* Set position to relative for positioning child elements */
+    height: 120vh; /* Set the height to cover the entire viewport height */
+    text-align: center; /* Center align the content */
+    background: url('floating.png') no-repeat center center; /* Set the background image and center it */
+    background-size: contain; /* Scale the image to fit within the container, maintaining its aspect ratio */
+    background-position: center; /* Center the image inside the container */
+    background-attachment: fixed; /* Keep the background image fixed when scrolling */
+}
+
+
+
+
+/* Image */
+.field-image {
+    width: 100%; /* Adjust the image width to match the full screen width */
+    height: 100%; /* Adjust the image height to match the full screen height */
+    background: url('floating.png') no-repeat center/cover; /* Make sure to set the correct image path */
+    background-size: cover; /* Ensure the image does not get stretched or distorted, and covers the entire container */
+}
+
+
+/* Slideshow container */
+.horizontal-slideshow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw; /* Full viewport width */
+    height: 60vh; /* Adjust height */
+    background-color: grey; /* Orange background */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Slide container */
+.slide-container {
+    display: flex;
+    width: calc(5 * 100%); /* Total width for 5 images */
+    transition: transform 1s ease-in-out; /* Smooth slide effect */
+    position: relative;
+}
+
+/* Individual slides */
+.slide {
+    flex: 0 0 50%; /* Each slide takes 50% of the container width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Images */
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures images fit without distortion */
+    border-radius: 10px; /* Add rounded corners */
+}
+
+.slide-description-section {
+    padding: 20px;
+    max-width: 800px; 
+    margin: 0 auto; 
+    background-color: rgba(255, 255, 255, 0.95); /* 半透明白色背景，改善文字可读性 */
+    color: #2E4D30; /* 设置段落文字为深绿色 */
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.slide-description-section h1 {
+    color: #1F3D22; /* 设置标题颜色为更深的绿色 */
+    font-size: 24px; /* 标题字体大小 */
+    margin-bottom: 15px;
+}
+
+.slide-description-section p {
+    margin-bottom: 10px;
+    color: #2E4D30; /* 段落颜色设置为深绿色 */
+    font-size: 16px; /* 字体大小设置 */
+}
+
+
+/* Set up perspective for 3D effect */
+.color-section {
+    perspective: 1000px; /* Create a 3D effect */
+}
+
+/* Rotation animation */
+@keyframes rotateImage3D {
+    0% {
+        transform: rotateY(0deg); /* No rotation at the beginning */
+    }
+    50% {
+        transform: rotateY(180deg); /* Half rotation */
+    }
+    100% {
+        transform: rotateY(360deg); /* Full rotation */
+    }
+}
+
+/* Apply rotation to all images in the color-section */
+.color-section img {
+    width: 100%; /* Make the image fill the container */
+    height: auto; /* Maintain aspect ratio */
+    transform-origin: center; /* Set rotation to the center of the image */
+    animation: rotateImage3D 10s infinite linear; /* Apply continuous rotation */
+    transition: transform 0.5s ease; /* Smooth transition for hover effect */
+}
+
+/* Position the description text */
+.color-item {
+    position: relative; /* Create a container for the description */
+}
+
+/* Description Text */
+.description {
+    display: none; /* Hide the description initially */
+    position: absolute;
+    bottom: 10px; /* Position the text at the bottom of the image */
+    left: 50%;
+    transform: translateX(-50%); /* Center the description horizontally */
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4)); /* Gradient background */
+    color: #fff; /* White text for better contrast */
+    padding: 15px;
+    border-radius: 10px; /* Rounded corners */
+    text-align: center;
+    width: 80%; /* Make the description box narrower */
+    font-family: 'Arial', sans-serif; /* Set a clean, modern font */
+    font-size: 1.1em; /* Slightly larger text for readability */
+    line-height: 1.5; /* Improve line spacing */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4); /* Soft shadow for depth */
+    opacity: 0; /* Make it invisible by default */
+    transform: translateX(-50%) translateY(20px); /* Start from below */
+    transition: opacity 0.4s ease, transform 0.4s ease; /* Smooth fade-in and slide-up effect */
+}
+
+/* Show description when hovering over the image */
+.color-item img:hover {
+    animation: none; /* Stop rotation */
+    transform: rotateY(0deg); /* Reset the image rotation */
+}
+
+.color-item img:hover + .description {
+    display: block; /* Show the description when hovering the image */
+    opacity: 1; /* Fade in the description */
+    transform: translateX(-50%) translateY(0); /* Slide the description up */
+}

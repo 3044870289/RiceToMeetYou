@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, dao.DBConnection" %>
-
+<%@ page import="java.util.Locale" %>
+<%@ page import="java.text.NumberFormat"%>
+<%
+    NumberFormat currencyFormat = NumberFormat.getInstance(Locale.JAPAN); // 日本格式
+%>
 <%
     Integer userID = (Integer) session.getAttribute("userID");
     Integer userRole = (Integer) session.getAttribute("userRole");
@@ -50,9 +54,9 @@
                 %>
                             <tr>
                                 <td><%= rs.getString("Name") %></td>
-                                <td>¥<%= rs.getInt("Price") %></td>
+                                <td>¥<%= currencyFormat.format(rs.getInt("Price")) %></td> <!-- 格式化单价 -->
                                 <td><%= rs.getInt("Quantity") %></td>
-                                <td>¥<%= totalPriceForItem %></td>
+                                <td>¥<%= currencyFormat.format(totalPriceForItem) %></td> <!-- 格式化单项总价 -->
                                 <td>
                                     <form action="RemoveFromCartServlet" method="post">
                                         <input type="hidden" name="cartID" value="<%= rs.getInt("CartID") %>">
@@ -69,21 +73,15 @@
             </table>
 
             <% if (hasItems) { %>
-                <p class="total"><strong>合計金額: ¥<%= totalPrice %></strong></p>
+                <p class="total"><strong>合計金額: ¥<%= currencyFormat.format(totalPrice) %></strong></p> <!-- 格式化总金额 -->
                 <div class="actions">
                     <form action="CheckoutServlet" method="post">
                         <input type="hidden" name="userID" value="<%= userID %>">
                         <button type="submit">お支払い</button>
                     </form>
-                    <button onclick="location.href='shop.jsp'">ショップに戻る</button>
-                    <button onclick="location.href='index.jsp'">ホームに戻る</button>
                 </div>
             <% } else { %>
-                <p class="empty-cart">ショッピングカートは空です。</p>
-                <div class="actions">
-                    <button onclick="location.href='shop.jsp'">ショップを見る</button>
-                    <button onclick="location.href='index.jsp'">ホームに戻る</button>
-                </div>
+                <p class="empty-cart">ショッピングカートは空です。</p>     
             <% } %>
         </div>
     </div>

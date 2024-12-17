@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.util.*, dao.DBConnection" %>
-
+<%@ page import="java.text.NumberFormat"%>
+<%
+    NumberFormat currencyFormat = NumberFormat.getInstance(Locale.JAPAN); // 日本格式
+%>
 <%
     String username = (String) session.getAttribute("username");
     Integer userRole = (Integer) session.getAttribute("userRole");
@@ -53,7 +56,7 @@
                         <img src="images/<%= product.get("photo") %>" alt="<%= product.get("name") %>">
                         <h2><%= product.get("name") %></h2>
                         <p><%= product.get("comment") %></p>
-                        <p>価格: ¥<%= product.get("price") %></p>
+                        <p>価格: ¥<%= currencyFormat.format(product.get("price")) %></p>
                         <p>在庫: <%= product.get("stock") %> 個</p>
                         <form action="AddToCartServlet" method="post">
                             <input type="hidden" name="userID" value="<%= session.getAttribute("userID") %>">

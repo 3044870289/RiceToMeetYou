@@ -1,5 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, java.sql.*, dao.DBConnection" %>
+
+<%
+    Integer userRole = (Integer) session.getAttribute("userRole");
+%>
+
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -65,10 +71,15 @@
 
     <!-- 控制部分 -->
     <div class="controls">
-        <button id="showOwnDrones">自分のドローンを表示</button>
-        <button id="showAllDrones">すべてのドローンを表示</button>
-        <!--   <button id="moveMultipleDrones">複数ドローンを移動</button>  功能有点垃圾 ，只能将固定前几个无人机移动到固定的几个坐标-->
-    </div>
+    <button id="showOwnDrones">自分のドローンを表示</button>
+   
+    <button id="toggleStations">ステーションを表示</button>
+    
+    <% if (userRole != null && userRole.equals(1)) { %>
+     <button id="showAllDrones">すべてのドローンを表示</button>
+        <button id="addStationButton">ステーションを追加</button>
+    <% } %>
+</div>
 
     <!-- 地图显示 -->
     <div id="map"></div>

@@ -24,7 +24,7 @@ public class DroneServlet extends HttpServlet {
 
         try {
             List<Drone> drones = droneService.getDrones(userID, globalView);
-            request.setAttribute("drones", drones); // 确保此处正确设置
+            request.setAttribute("drones", drones); 
             request.getRequestDispatcher("drones.jsp").forward(request, response);
             System.out.println("Drones: " + drones);
 

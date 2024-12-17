@@ -51,14 +51,14 @@
         }
 
         .btn-box button {
-            width: 120px; /* 设置按钮宽度 */
-            height: 40px; /* 设置按钮高度 */
-            border: none; /* 去除边框 */
-            background: #4CAF50; /* 按钮绿色背景 */
-            color: white; /* 按钮文字白色 */
-            border-radius: 5px; /* 按钮圆角 */
-            cursor: pointer; /* 鼠标样式 */
-            transition: background-color 0.3s ease; /* 鼠标悬停效果 */
+            width: 120px; 
+            height: 40px; 
+            border: none; 
+            background: #4CAF50; 
+            color: white; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            transition: background-color 0.3s ease;
         }
 
         .btn-box button:hover {
@@ -77,6 +77,18 @@
 
         .register-link a:hover {
             color: #45a049; /* 鼠标悬停时更深的绿色 */
+            .register-link {
+    margin-top: 20px; /* 与按钮之间的间距 */
+    font-size: 14px;
+    font-weight: bold; /* 添加字体加粗 */
+}
+
+.register-link a {
+    color: #4CAF50; /* 绿色超链接 */
+    text-decoration: none; /* 去除下划线 */
+    font-weight: bold; /* 超链接文字加粗 */
+}
+            
         }
     </style>
 </head>
@@ -113,8 +125,8 @@
             </div>
         </form>
 
-        <!-- 添加“没有账号？现在注册”链接 -->
-        <p class="register-link">
+   
+        <p class="register-link" style="font-weight: bold;">
             アカウントがありませんか？ <a href="register.jsp">今すぐ登録</a>
         </p>
     </div>

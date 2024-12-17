@@ -1,5 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*, java.sql.*, dao.DBConnection" %>
+<%@ page import="java.text.NumberFormat"%>
+<%
+    NumberFormat currencyFormat = NumberFormat.getInstance(Locale.JAPAN); // 日本格式
+%>
 
 <%
     // 从会话中获取必要的用户信息
@@ -7,10 +11,15 @@
     Integer userRole = (Integer) session.getAttribute("userRole");
     String username = (String) session.getAttribute("username");
 
-    if (userID == null) {
+    if (username == null || userRole == null || userID == null) {
         response.sendRedirect("login.jsp");
         return;
     }
+
+    String userRoleText = (userRole == 1) ? "管理者" : "一般ユーザー";
+    String userWelcomeText = (userRole == 1) 
+        ? "管理者として、操作をよろしくお願いします！" 
+        : "ドローン計画を楽しんでください！";
 
     List<Map<String, String>> purchaseHistory = new ArrayList<>();
     List<Map<String, String>> planSelectionHistory = new ArrayList<>();
@@ -115,6 +124,43 @@
         .button-container button {
             margin: 10px; /* 按钮之间的间距 */
         }
+
+        /* 增强表格区分样式 */
+        h2 {
+            margin-top: 30px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border-left: 4px solid #4CAF50;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:nth-child(odd) {
+            background-color: #fff;
+        }
+        
+         .welcome {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        .role {
+            font-size: 20px;
+            color: #555;
+        }
     </style>
 </head>
 <body>
@@ -122,8 +168,9 @@
     <div class="container">
         <div class="module">
             <h1>ホームへようこそ</h1>
+                   <p class="welcome"><%= username %> 様、<%= userRoleText %>としてようこそ！</p>
             <p class="slogan" id="slogan"></p>
-            <p><%= username %> 様、ようこそ！</p>
+            
 
             <div class="button-container">
                 <% if (userRole != null && userRole.equals(1)) { %>
@@ -132,8 +179,12 @@
                 <button class="button" onclick="location.href='logout.jsp'">ログアウト</button>
             </div>
 
-            <h2>購入履歴</h2>
-            <table>
+            <h2>米の購入履歴</h2>
+            <div class="button-container">
+    <button class="button" onclick="togglePurchaseHistory()">表示/非表示</button>
+</div>
+            <table id="purchase-history-table">
+
                 <tr>
                     <th>購入金額</th>
                     <th>購入日時</th>
@@ -141,7 +192,7 @@
                 </tr>
                 <% for (Map<String, String> record : purchaseHistory) { %>
                     <tr>
-                        <td>¥<%= record.get("totalAmount") %></td>
+                        <td>¥<%= currencyFormat.format(Integer.parseInt(record.get("totalAmount"))) %></td>
                         <td><%= record.get("purchaseTime") %></td>
                         <td>
                             <form action="PurchaseDetailsServlet" method="get">
@@ -153,7 +204,7 @@
                 <% } %>
             </table>
 
-            <h2>プラン選択履歴</h2>
+            <h2>ドロンプラン選択履歴</h2>
             <table>
                 <tr>
                     <th>プラン</th>
@@ -184,10 +235,20 @@
     </div>
 
     <script>
+    
         // 设置标语的文字内容
         const sloganText = "<%= selectedSlogan %>";
         const sloganElement = document.getElementById("slogan");
         sloganElement.innerText = sloganText; // 初始化内容
+        function togglePurchaseHistory() {
+            const table = document.getElementById("purchase-history-table");
+            if (table.style.display === "none" || table.style.display === "") {
+                table.style.display = "table"; // 显示表格
+            } else {
+                table.style.display = "none"; // 隐藏表格
+            }
+        }
+
     </script>
 </body>
 </html>
